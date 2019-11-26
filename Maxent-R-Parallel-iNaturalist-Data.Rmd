@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Download species distribution data from iNaturalist or/and CABI.org
 
-# get european grapevine moth (EGVM) from iNaturalist
+# get data from iNaturalist
 library(rinat)
 inat=get_inat_obs(query="Lobesia botrana")
 inat2=inat[,c("longitude","latitude")]
@@ -59,7 +59,7 @@ dis_filter = function(pts,dist){
   for (i in 1:n){
     if (i>n){break}
     
-    dis=distm(pts,pts[i,])/1000 # concert m to km
+    dis=distm(pts,pts[i,])/1000 # convert m to km
     z=which(dis<dist & dis!=0)
     
     if (length(z)>0){
@@ -153,7 +153,7 @@ comb=function(auc,map){
 
 multiRuns=list()
 
-# only try 4 runs here, could be more
+# only try 10 runs here, could be more
 ```
 
 ```{r, results='asis'}
