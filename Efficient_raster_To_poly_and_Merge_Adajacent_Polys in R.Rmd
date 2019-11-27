@@ -77,7 +77,7 @@ t2
 
 
 ## Still, similar with ArcGIS rasterToPolygon, pixels connected along a diagonal line are classified into different polygons
-## Here, develop a function to merge polygons within a given distance 
+## Here, develop a function to merge polygons within a given distance. Below are two different functions that can do the job nicely.
 
 ```{r DefineFun2}
 ### function 1 based on distance
