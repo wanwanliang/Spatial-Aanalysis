@@ -1,0 +1,153 @@
+---
+title: "LiDar Feature Extraction for Spatial Polygons -- Parallel Processing in R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R has a very neat package called lidR that can process Lidar data efficiently. In this post, I use lidR to extract Lidar features for spatial polygons with parallels.
+
+
+#### Load all packages 
+```{r load}
+library(raster)
+library(rgdal)
+library(lidR)
+library(modeest)
+library(parallel)
+library(foreach)
+library(doParallel)
+```
+
+``` {r lasfiles}
+setwd("D:/KnoxTN_LiDar_usgs/")
+las=list.files(".",".las$")
+length(las)
+head(las)
+```
+
+```{r loadPoly}
+plys=readOGR(".","pred1SE")
+dim(plys)
+crs(plys)
+
+# convert plys to state-plane projection
+plys2=spTransform(plys,"+proj=lcc +lat_1=35.25 +lat_2=36.41666666666666
++lat_0=34.33333333333334 +lon_0=-86 +x_0=600000 +y_0=0
++ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft
++no_defs ")
+```
+
+#### I would say the catalog function provided by lidR is excellent. It integrates the spatial coverage of all las files in the folder. So later it can quickly select the right las files that overlap with a given spatial polygon. 
+``` {r ctg}
+ctg = catalog('.',recursive=TRUE)
+plot(ctg)
+```
+
+#### Define a function to remove potential noise in Lidar Returns
+``` {r removeNoise}
+# remove potential outliers for each cell (Z out of 95% quantile range & Z<0)
+lasfilternoise = function(las, res=1)
+{
+  p95 <- grid_metrics(las, ~quantile(Z, probs = 0.95), res)
+  las <- lasmergespatial(las, p95, "p95")
+  las <- lasfilter(las, Z < p95)
+  las$p95 <- NULL
+  # Remove negative values
+  las <- lasfilter(las, Z > 0)
+  
+  return(las)
+}
+
+```
+#### Use foreach to parallel the process of extracting Lidar Features for polygons. To keep it simple, here I only extracted the Lidar features for the first 500 polygons, and recorded the processing time. 
+
+``` {r LidVars}
+
+cl <- makeCluster(detectCores()-2) # use 10 cores here
+registerDoParallel(cl)
+
+ptime=system.time({  # use system.time to record the processing time
+  
+  result=foreach (i=1:500, .combine=rbind,   .export=c("mfv","lasfilternoise","lasnormalize","grid_terrain","lasclip","extract"), .packages=c('raster',"rgdal","modeest","lidR")) %dopar% {
+          
+    polygon=plys2[i,]
+    area=raster::area(polygon)
+    
+    lddt = lasclip(ctg,polygon)
+    d=dim(lddt@data)[1]
+    
+    if (d!=0){
+      
+      #remove potential outliers
+      lddt <- lasfilternoise(lddt)
+      
+      #generate dem to remove the topography from point cloud, use help(lasnormalize)
+       # to see details
+      dtm = try(grid_terrain(lddt, algorithm = kriging()) )
+      
+      if (class(dtm)!="try-error") {
+        
+      #Subtract dtm from point cloud to create a dataset normalized with the ground at 0
+        lddt_flat = lasnormalize(lddt, dtm,na.rm=T)
+        
+        # get number of all points
+        Npoint=dim(lddt_flat@data)[1]
+        
+        #get dataset for point clouds
+        dt=lddt_flat@data
+        
+        #only look at first return (canopy height)
+        cnp=dt[dt$ReturnNumber==1,]
+        
+        meanZ=mean(cnp$Z) #mean
+        sdZ=sd(cnp$Z) #sd
+        varZ=var(cnp$Z) #variance
+        intenZ=mean(cnp$Intensity) #mean of intensity
+        
+        
+        n1=try(which.max(density(cnp$Z)$y))
+        
+        if (class(n1)!="try-error"){
+          modeZ1st=density(cnp$Z)$x[n1]  #mode of canopy height (first return)
+          n2=which.max(density(dt$Z)$y)
+          modeZall=density(dt$Z)$x[n2] #mode of all point height
+        }
+        
+      }
+      
+    }
+    
+    allZ=c(area,Npoint,meanZ,sdZ,varZ,intenZ,modeZ1st,modeZall)
+    return(allZ)
+    
+  }
+})
+stopCluster(cl)
+ptime 
+
+```
+
+#### Using 10 cores on a computer with 16gb memory, the processing time for 500 polygons took 11 mins in R console (in Rmarkdown it took 15mins as R Code tends to run slower in Markdown ). Not bad I would say.
+
+```{r results}
+
+lidVars=as.data.frame(result)
+dim(lidVars)
+
+# here I extracted 8 features
+colnames(lidVars)=c("Area",'Npoints','MeanZ','SDZ','VarianceZ',"Intensity",'Ht_mode',"Allpts_mode")
+
+# get the important point density feature simply by (the number of point cloud）/ （area of polygons） 
+
+lidVars$Density=lidVars$Npoints/lidVars$Area
+
+head(lidVars)
+
+#write.csv(lidVars,"LidarFeatures.csv",row.names = F)
+
+```
+
+
