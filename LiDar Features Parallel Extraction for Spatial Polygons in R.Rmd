@@ -7,7 +7,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R has a very neat package called lidR that can process Lidar data efficiently. In this post, I use lidR to extract Lidar features for spatial polygons with parallels.
+## R has a very neat package called lidR that can process Lidar data efficiently. In this post, I use lidR to extract Lidar features 
+## for spatial polygons with parallels.
 
 
 #### Load all packages 
@@ -40,7 +41,7 @@ plys2=spTransform(plys,"+proj=lcc +lat_1=35.25 +lat_2=36.41666666666666
 +no_defs ")
 ```
 
-#### I would say the catalog function provided by lidR is excellent. It integrates the spatial coverage of all las files in the folder. So later it can quickly select the right las files that overlap with a given spatial polygon. 
+#### I would say the catalog function provided by lidR is excellent. It integrates the spatial coverage of all las files in the folder. ## So later it can quickly select the right las files that overlap with a given spatial polygon. 
 ``` {r ctg}
 ctg = catalog('.',recursive=TRUE)
 plot(ctg)
@@ -130,7 +131,8 @@ ptime
 
 ```
 
-#### Using 10 cores on a computer with 16gb memory, the processing time for 500 polygons took 11 mins in R console (in Rmarkdown it took 15mins as R Code tends to run slower in Markdown ). Not bad I would say.
+#### Using 10 cores on a computer with 16gb memory, the processing time for 500 polygons took 11 mins in R console 
+## (in Rmarkdown it took 15mins as R Code tends to run slower in Markdown ). Not bad I would say.
 
 ```{r results}
 
