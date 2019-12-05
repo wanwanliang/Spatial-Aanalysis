@@ -41,7 +41,8 @@ plys2=spTransform(plys,"+proj=lcc +lat_1=35.25 +lat_2=36.41666666666666
 +no_defs ")
 ```
 
-#### I would say the catalog function provided by lidR is excellent. It integrates the spatial coverage of all las files in the folder. ## So later it can quickly select the right las files that overlap with a given spatial polygon. 
+#### I would say the catalog function provided by lidR is excellent. It integrates the spatial coverage of all las files in the folder.
+## So later it can quickly select the right las files that overlap with a given spatial polygon. 
 ``` {r ctg}
 ctg = catalog('.',recursive=TRUE)
 plot(ctg)
@@ -63,7 +64,8 @@ lasfilternoise = function(las, res=1)
 }
 
 ```
-#### Use foreach to parallel the process of extracting Lidar Features for polygons. To keep it simple, here I only extracted the Lidar features for the first 500 polygons, and recorded the processing time. 
+#### Use foreach to parallel the process of extracting Lidar Features for polygons. To keep it simple, here I only extracted 
+## the Lidar features for the first 500 polygons, and recorded the processing time. 
 
 ``` {r LidVars}
 
