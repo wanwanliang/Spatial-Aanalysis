@@ -33,9 +33,7 @@ ra2ply <- function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',pypath=NULL) 
   shp <- readOGR(dirname(outshape), layer = basename(outshape))
   crs(shp)=crs(x)
   
-  # remove last polygon if the last polygon have the same extent with input raster
-  n=dim(shp)[1]
-  if (extent(shp[n,])==extent(x)){shp=shp[-n,]}
+  shp=shp[shp$DN!=0,]
   return(shp)
   
   setwd(dir)
