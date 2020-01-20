@@ -1,4 +1,4 @@
-<h1> Spatial Aanalysis with R or Python </h1>
+<h1> Spatial Aanalysis with R/Python </h1>
 
 <h2>Table of Contents</h2>
 
