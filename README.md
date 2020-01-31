@@ -6,6 +6,8 @@
 <h3><a href="/code/LiDar%20Features%20Extraction%20for%20Spatial%20Polygons%20in%20R.Rmd"> 2. Parallel feature extraction for polygons from lidar point clouds in R  </a></h3>
 <h3><a href="/code/Maxent-R-Parallel-iNaturalist-Data.Rmd"> 3. iNaturalist data extract and Maxent model training in R  </a></h3>
 
+<br/>
+<br/>
+<br/>
 
-
-![Lidar Plot](/code/LidarPlot2.PNG)
+![Lidar Plot](/code/lidarPlot.PNG)
