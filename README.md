@@ -1,6 +1,6 @@
-<h1> Spatial Aanalysis with R/Python </h1>
+<div align="center><h1> Spatial Aanalysis with R/Python </h1></div>
 
-<h2>Table of Contents</h2>
+<div align="center"><h2>Table of Content (Navigation Link) </h2></div>
 
 <h3><a href="/code/Efficient_raster_To_poly_and_Merge_Adajacent_Polys%20in%20R.Rmd"> 1. Efficient raster to polygons in R and merge adajacent polygons </a></h3>
 <h3><a href="/code/LiDar%20Features%20Extraction%20for%20Spatial%20Polygons%20in%20R.Rmd"> 2. Parallel feature extraction for polygons from lidar point clouds in R  </a></h3>
