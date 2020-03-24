@@ -1,4 +1,4 @@
-<div align="center> <h1> Spatial Aanalysis with R/Python </h1> </div>
+<div align="center"> <h1> Spatial Aanalysis with R/Python </h1> </div>
 
 <div align="center"><h2> Table of Content (Navigation Link) </h2></div>
 
