@@ -45,3 +45,4 @@ for (i in 1:(length(shp)-1)){
   ply=SpatialPolygonsDataFrame(t,nd)
   crs(ply)=crs(aoi1)
   writeOGR(ply,".",char,driver="ESRI Shapefile",overwrite_layer = T)
+  }
